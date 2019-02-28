@@ -35,9 +35,10 @@ def about():
     return "This is an internal test for chat bot"
 
 
-@app.route('/results', methods=['GET', 'POST'])
-def results():
-    my_img = settings.saved_imgs + request.args.get('imageName')
+@app.route('/results/<imageName>', methods=['GET', 'POST'])
+def results(imageName):
+    # my_img = settings.saved_imgs + request.args.get('imageName')
+    my_img = settings.saved_imgs + imageName
     res = predictor_fnn.predict_single_img(my_img, settings.n_in, settings.n_out, settings.hidden_layers)
     return res
     #     return render_template('results.html',
