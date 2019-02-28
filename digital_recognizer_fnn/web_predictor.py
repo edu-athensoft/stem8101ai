@@ -9,16 +9,12 @@ from digital_recognizer_fnn.model_fnn import FFNN
 from digital_recognizer_fnn.predictor_fnn import predict_single_img
 from digital_recognizer_fnn import settings
 import tensorflow as tf
+from digital_recognizer_fnn import predictor_fnn
 
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
-n_in = settings.n_in
-n_out = settings.n_out
-hidden_layers = settings.hidden_layers
-nn = FFNN(n_in=n_in, n_out=n_out, hidden_layers=hidden_layers, reg_type='multiclass',
-          optimizer=tf.train.AdamOptimizer)
 
 
 @app.route('/')
@@ -39,12 +35,11 @@ def about():
     return "This is an internal test for chat bot"
 
 
-@app.route('/results', methods=['POST'])
+@app.route('/results', methods=['GET', 'POST'])
 def results():
-    if request.method == 'POST':
-        my_img = request.form['img_name']
-        res = predict_single_img(my_img, settings.n_in, settings.n_out, settings.hidden_layers)
-        return res
+    my_img = settings.saved_imgs + request.args.get('imageName')
+    res = predictor_fnn.predict_single_img(my_img, settings.n_in, settings.n_out, settings.hidden_layers)
+    return res
     #     return render_template('results.html',
     #                            content=my_img,
     #                            prediction=pred_label,

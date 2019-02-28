@@ -11,10 +11,6 @@ from digital_recognizer_fnn import settings
 import json
 
 
-nn = FFNN(n_in=settings.n_in, n_out=settings.n_out, hidden_layers=settings.hidden_layers, reg_type='multiclass',
-          optimizer=tf.train.AdamOptimizer)
-
-
 def load_data():
     (train_X, train_y), (test_X, test_y) = mnist.load_data()
     train_X = train_X.reshape(len(train_X), 784)
@@ -36,6 +32,8 @@ def predict_single_img(my_img, n_in, n_out, hidden_layers):
     image = img.imread(str(my_img))
     image = image / 255.0
     image = image.reshape(1, settings.n_in)
+    nn = FFNN(n_in=settings.n_in, n_out=settings.n_out, hidden_layers=settings.hidden_layers, reg_type='multiclass',
+              optimizer=tf.train.AdamOptimizer)
     pred_proba, pred_label = nn.predict(test_X=image)
     proba = np.max(pred_proba)
     # print(proba, pred_label)
